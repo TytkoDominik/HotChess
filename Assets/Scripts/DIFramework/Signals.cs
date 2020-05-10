@@ -1,5 +1,6 @@
 using System.Collections.Generic;
-using BoardLogic;
+using Flow.Highlight;
+using GameLogic.Board;
 using UnityEngine;
 
 namespace DIFramework
