@@ -16,13 +16,13 @@ namespace GameLogic.GameRules
         [Inject] private SignalBus _signalBus;
         [Inject] private HighlightController _highlightController;
         [Inject] private ActivePlayer _activePlayer;
-        public Board.Board Board = new Board.Board();
+        private Board.Board _board = new Board.Board();
         private Dictionary<PieceType, Moveset> _movesets = new Dictionary<PieceType, Moveset>();
         private PieceColor ActivePlayerColor => _activePlayer.GetActivePlayerColor();
         private List<Move> _possibleLegalMoves = new List<Move>();
 
         [Inject]
-        public void Initialize()
+        private void Initialize()
         {
             _movesets.Add(PieceType.Pawn, new PawnMoveset());
             _movesets.Add(PieceType.Rook, new RookMoveset());
@@ -37,13 +37,13 @@ namespace GameLogic.GameRules
 
         private void StartGame()
         {
-            Board = new Board.Board();
-            _signalBus.Fire(new CreateBoardSignal(Board));
+            _board = new Board.Board();
+            _signalBus.Fire(new CreateBoardSignal(_board));
         }
 
         private void PromotePawn(PromotionSignal obj)
         {
-            Board.PromotePawn(obj.Position, obj.Type);
+            _board.PromotePawn(obj.Position, obj.Type);
         }
 
         public void PositionWasClicked(Vector2 position)
@@ -63,14 +63,14 @@ namespace GameLogic.GameRules
 
         private void PerformMove(Move move)
         {
-            Board.MovePiece(move);
+            _board.MovePiece(move);
 
-            if (IsCheck(move.Color.Opposite(), Board))
+            if (IsCheck(move.Color.Opposite(), _board))
             {
                 move.IsCheck = true;
             }
 
-            if (IsCheckMate(move.Color.Opposite(), Board))
+            if (IsCheckMate(move.Color.Opposite(), _board))
             {
                 move.IsMate = true;
             }
@@ -82,13 +82,13 @@ namespace GameLogic.GameRules
 
         private void SelectBoardPiece(Vector2 position)
         {
-            _possibleLegalMoves = GetLegalMoves(position, Board);
+            _possibleLegalMoves = GetLegalMoves(position, _board);
             _highlightController.SetHighlightedData(_possibleLegalMoves);
         }
 
         private bool CouldMovePieceOnPosition(Vector2 position)
         {
-            return Board.IsPositionOccupiedByColor(position, ActivePlayerColor);
+            return _board.IsPositionOccupiedByColor(position, ActivePlayerColor);
         }
 
         private List<Move> GetLegalMoves(Vector2 position, Board.Board board)
@@ -129,7 +129,7 @@ namespace GameLogic.GameRules
 
         private bool IsIllegalMove(Move move)
         {
-            var tempBoard = new Board.Board(Board);
+            var tempBoard = new Board.Board(_board);
             tempBoard.MovePiece(move);
 
             return IsCheck(move.Color, tempBoard);
@@ -180,6 +180,4 @@ namespace GameLogic.GameRules
             return antiCheckMoves;
         }
     }
-
-    
 }

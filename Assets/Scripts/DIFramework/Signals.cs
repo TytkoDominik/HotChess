@@ -110,4 +110,8 @@ namespace DIFramework
             Color = color;
         }
     }
+
+    public class UpdatePlayerLabelsSignal
+    {
+    }
 }

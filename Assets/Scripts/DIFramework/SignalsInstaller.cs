@@ -1,3 +1,4 @@
+using UnityEngine.PlayerLoop;
 using Zenject;
 
 namespace DIFramework
@@ -21,6 +22,8 @@ namespace DIFramework
             Container.DeclareSignal<CreateBoardSignal>();
             Container.DeclareSignal<StartGameSignal>();
             Container.DeclareSignal<EndGameSignal>();
+
+            Container.DeclareSignal<UpdatePlayerLabelsSignal>();
         }
     }
 }
